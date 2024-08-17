@@ -18,10 +18,25 @@ app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
+// Function for validation of date format
+function isValidDate(stringDate) {
+  return !isNaN(Date.parse(stringDate));
+}
 
 // your first API endpoint... 
-app.get("/api/hello", function (req, res) {
-  res.json({greeting: 'hello API'});
+app.get("/api/:date", function (req, res) {
+
+  let goodDate = isValidDate(req.params.date);
+
+  if ( !goodDate ) return res.json({ error : "Invalid Date" });
+
+  let unix = Math.floor(new Date(req.params.date).getTime() / 1000);
+  let utc = new Date(req.params.date).toUTCString();
+
+  res.json({
+    unix: unix,
+    utc: utc
+  });
 });
 
 
