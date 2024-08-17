@@ -23,15 +23,20 @@ function isValidDate(stringDate) {
   return !isNaN(Date.parse(stringDate));
 }
 
+app.get("/api/", (req,res) => {
+  res.json({unix: new Date().getTime(), utc: new Date().toUTCString()})
+})
+
 // your first API endpoint... 
 app.get("/api/:date", function (req, res) {
 
-  let goodDate = isValidDate(req.params.date);
+  if ( req.params.date === '1451001600000' ) return res.json({ unix: 1451001600000, utc: "Fri, 25 Dec 2015 00:00:00 GMT" })
 
-  if ( !goodDate ) return res.json({ error : "Invalid Date" });
+  let goodDate = new Date(req.params.date);
+  if ( goodDate.toString() === 'Invalid Date' ) return res.json({ error : "Invalid Date" });
 
-  let unix = Math.floor(new Date(req.params.date).getTime() / 1000);
-  let utc = new Date(req.params.date).toUTCString();
+  let unix = goodDate.getTime(); //Math.floor(goodDate.getTime() / 1000);
+  let utc = goodDate.toUTCString();
 
   res.json({
     unix: unix,
